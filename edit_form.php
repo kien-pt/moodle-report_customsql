@@ -68,9 +68,15 @@ class report_customsql_edit_form extends moodleform {
             $mform->addElement('static', 'params', '', get_string('queryparams', 'report_customsql'));
             foreach ($this->_customdata as $queryparam => $formparam) {
                 $type = report_customsql_get_element_type($queryparam);
-                $mform->addElement($type, $formparam, $queryparam);
+                debugging(print_r($type, true));
+
                 if ($type == 'text') {
+                    $mform->addElement($type, $formparam, $queryparam);
                     $mform->setType($formparam, PARAM_RAW);
+                } else if ($type == 'select') {
+                    $categoryoptions = db_options($result = str_replace("select_", "", $queryparam), 'id', 'fullname');
+                    debugging(print_r($categoryoptions, true));
+                    $mform->addElement('select', $formparam, $queryparam, $categoryoptions);
                 }
                 $hasparameters++;
             }

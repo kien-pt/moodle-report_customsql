@@ -93,6 +93,10 @@ function report_customsql_get_element_type($name) {
     if (preg_match($regex, $name)) {
         return 'date_time_selector';
     }
+    $regex = '/^select|select$/';
+    if (preg_match($regex, $name)) {
+        return 'select';
+    }
     return 'text';
 }
 
@@ -782,6 +786,11 @@ function report_customsql_is_daily_report_ready($report, $timenow) {
 function report_customsql_category_options() {
     global $DB;
     return $DB->get_records_menu('report_customsql_categories', null, 'name ASC', 'id, name');
+}
+
+function db_options($table, $value, $title) {
+  global $DB;
+  return $DB->get_records_menu($table, null, "$value ASC", "$value, $title");
 }
 
 /**

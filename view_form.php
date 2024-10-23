@@ -41,10 +41,15 @@ class report_customsql_view_form extends moodleform {
 
         foreach ($this->_customdata as $queryparam => $formparam) {
             $type = report_customsql_get_element_type($queryparam);
-            $mform->addElement($type, $formparam, str_replace('_', ' ', $queryparam));
             if ($type == 'text') {
+                $mform->addElement($type, $formparam, str_replace('_', ' ', $queryparam));
                 $mform->setType($formparam, PARAM_RAW);
-            }
+            } else if ($type == 'select') {
+              // $categoryoptions = report_customsql_category_options();
+              $categoryoptions = db_options($result = str_replace("select_", "", $queryparam), 'id', 'fullname');
+              debugging(print_r($categoryoptions, true));
+              $mform->addElement('select', $formparam, $queryparam, $categoryoptions);
+          }
         }
 
         $this->add_action_buttons(true, get_string('runquery', 'report_customsql'));
