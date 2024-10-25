@@ -97,6 +97,9 @@ function report_customsql_get_element_type($name) {
     if (preg_match($regex, $name)) {
         return 'select';
     }
+    if (in_array($name, ['khoa', 'dot', 'lop', 'mon'])) {
+        return $name;
+    }
     return 'text';
 }
 
@@ -462,6 +465,16 @@ function report_customsql_pretify_column_names($row, $querysql) {
         if (preg_match('~SELECT.*?\s(' . preg_quote($colname, '~') . ')\b~is',
                 $querysql, $matches)) {
             $colname = $matches[1];
+        } else {
+            $lower_querysql = strtolower($querysql);
+            $lower_colname = strtolower($colname);
+    
+            $startIndex = strpos($lower_querysql, $lower_colname);
+            if ($startIndex !== false) {
+                $length = strlen($colname);
+                $substring = substr($querysql, $startIndex, $length);
+                $colname = $substring;
+            }
         }
 
         // Change underscores to spaces.
@@ -490,6 +503,7 @@ function report_customsql_write_csv_row($handle, $data) {
 
 function report_customsql_start_csv($handle, $firstrow, $report) {
     $colnames = report_customsql_pretify_column_names($firstrow, $report->querysql);
+
     if ($report->singlerow) {
         array_unshift($colnames, get_string('queryrundate', 'report_customsql'));
     }
@@ -788,9 +802,50 @@ function report_customsql_category_options() {
     return $DB->get_records_menu('report_customsql_categories', null, 'name ASC', 'id, name');
 }
 
-function db_options($table, $value, $title) {
-  global $DB;
-  return $DB->get_records_menu($table, null, "$value ASC", "$value, $title");
+function report_customsql_db_options($sql, $value, $title) {
+    global $DB;
+
+    $options = [];
+    $records = $DB->get_records_sql($sql);
+
+    foreach ($records as $record) {
+        $options[$record->$value] = $record->$title;
+    }
+
+    return $options;
+}
+
+function dttx_options($type) {
+    $label = '';
+    $options = [];
+
+    switch ($type) {
+        case 'khoa':
+            $label = 'Khóa học';
+            $sql = "SELECT id, fullname FROM {course}";
+            $options = report_customsql_db_options($sql, 'id', 'fullname');
+            break;
+        case 'dot':
+            $label = 'Đợt học';
+            $sql = "SELECT DISTINCT startdate, DATE_FORMAT(FROM_UNIXTIME(startdate), '%d/%m/%Y') AS startdate_str FROM {course}";
+            $options = report_customsql_db_options($sql, 'startdate', 'startdate_str');
+            break;
+        case 'lop':
+            $label = 'Lớp học phần';
+            $sql = "SELECT id, name FROM {groups}";
+            $options = report_customsql_db_options($sql, 'id', 'name');
+            break;
+        case 'mon':
+            $label = 'Môn học phần';
+            $sql = "SELECT id, LEFT(fullname, CHAR_LENGTH(fullname) - 9) AS name FROM {course}";
+            $options = report_customsql_db_options($sql, 'id', 'name');
+            break;
+        default:
+            return ['Unknown type', []];
+    }
+
+    $options = array('-1' => 'Tất cả') + $options;
+    return [$label, $options];
 }
 
 /**

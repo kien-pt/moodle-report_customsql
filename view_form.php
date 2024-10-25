@@ -35,6 +35,7 @@ require_once(dirname(__FILE__) . '/locallib.php');
  */
 class report_customsql_view_form extends moodleform {
     public function definition() {
+        global $DB;
         $mform = $this->_form;
 
         $mform->addElement('header', 'heading', get_string('queryparameters', 'report_customsql'));
@@ -44,12 +45,12 @@ class report_customsql_view_form extends moodleform {
             if ($type == 'text') {
                 $mform->addElement($type, $formparam, str_replace('_', ' ', $queryparam));
                 $mform->setType($formparam, PARAM_RAW);
-            } else if ($type == 'select') {
-              // $categoryoptions = report_customsql_category_options();
-              $categoryoptions = db_options($result = str_replace("select_", "", $queryparam), 'id', 'fullname');
-              debugging(print_r($categoryoptions, true));
-              $mform->addElement('select', $formparam, $queryparam, $categoryoptions);
-          }
+            }
+
+            if (in_array($type, ['khoa', 'dot', 'lop', 'mon'])) {
+                list($label, $options) = dttx_options($type);
+                $mform->addElement('select', $formparam, $label, $options);
+            }
         }
 
         $this->add_action_buttons(true, get_string('runquery', 'report_customsql'));
