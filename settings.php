@@ -46,6 +46,35 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configtext_with_maxlength('report_customsql/querylimitmaximum',
             get_string('querylimitmaximum', 'report_customsql'),
             get_string('querylimitmaximum_desc', 'report_customsql'), 5000, PARAM_INT, null, 10));
+
+    $settings->add(new admin_setting_configtext(
+        'report_customsql/khoahocsql', // Unique setting name
+        'SQL Query To Get List Of `Khoa hoc`', // Display name
+        'SQL Query To Get List Of `Khoa hoc`', // Description
+        'SELECT id, fullname FROM {course}', // Default value
+        PARAM_TEXT // Input type
+    ));
+    $settings->add(new admin_setting_configtext(
+        'report_customsql/dothocsql',
+        'SQL Query To Get List Of `Dot hoc`',
+        'SQL Query To Get List Of `Dot hoc`',
+        "SELECT DISTINCT startdate, DATE_FORMAT(FROM_UNIXTIME(startdate), '%d/%m/%Y') AS startdate_str FROM {course}",
+        PARAM_TEXT
+    ));
+    $settings->add(new admin_setting_configtext(
+        'report_customsql/lophocsql',
+        'SQL Query To Get List Of `Lop hoc`',
+        'SQL Query To Get List Of `Lop hoc`',
+        "SELECT id, name FROM {groups}",
+        PARAM_TEXT
+    ));
+    $settings->add(new admin_setting_configtext(
+        'report_customsql/monhocsql',
+        'SQL Query To Get List Of `Mon hoc`',
+        'SQL Query To Get List Of `Mon hoc`',
+        'SELECT id, LEFT(fullname, CHAR_LENGTH(fullname) - 9) AS name FROM {course}',
+        PARAM_TEXT
+    ));
 }
 
 $ADMIN->add('reports', new admin_externalpage('report_customsql',

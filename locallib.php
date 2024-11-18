@@ -822,22 +822,22 @@ function dttx_options($type) {
     switch ($type) {
         case 'khoa':
             $label = 'Khóa học';
-            $sql = "SELECT id, fullname FROM {course}";
+            $sql = get_config('report_customsql', 'khoahocsql');
             $options = report_customsql_db_options($sql, 'id', 'fullname');
             break;
         case 'dot':
             $label = 'Đợt học';
-            $sql = "SELECT DISTINCT startdate, DATE_FORMAT(FROM_UNIXTIME(startdate), '%d/%m/%Y') AS startdate_str FROM {course}";
+            $sql = get_config('report_customsql', 'dothocsql');
             $options = report_customsql_db_options($sql, 'startdate', 'startdate_str');
             break;
         case 'lop':
             $label = 'Lớp học phần';
-            $sql = "SELECT id, name FROM {groups}";
+            $sql = get_config('report_customsql', 'lophocsql');
             $options = report_customsql_db_options($sql, 'id', 'name');
             break;
         case 'mon':
             $label = 'Môn học phần';
-            $sql = "SELECT id, LEFT(fullname, CHAR_LENGTH(fullname) - 9) AS name FROM {course}";
+            $sql = get_config('report_customsql', 'monhocsql');
             $options = report_customsql_db_options($sql, 'id', 'name');
             break;
         default:
