@@ -823,22 +823,22 @@ function dttx_options($type) {
         case 'khoa':
             $label = 'Khóa học';
             $sql = get_config('report_customsql', 'khoahocsql');
-            $options = report_customsql_db_options($sql, 'id', 'fullname');
+            $options = report_customsql_db_options($sql, 'value', 'title');
             break;
         case 'dot':
             $label = 'Đợt học';
             $sql = get_config('report_customsql', 'dothocsql');
-            $options = report_customsql_db_options($sql, 'startdate', 'startdate_str');
+            $options = report_customsql_db_options($sql, 'value', 'title');
             break;
         case 'lop':
             $label = 'Lớp học phần';
             $sql = get_config('report_customsql', 'lophocsql');
-            $options = report_customsql_db_options($sql, 'id', 'name');
+            $options = report_customsql_db_options($sql, 'value', 'title');
             break;
         case 'mon':
             $label = 'Môn học phần';
             $sql = get_config('report_customsql', 'monhocsql');
-            $options = report_customsql_db_options($sql, 'id', 'name');
+            $options = report_customsql_db_options($sql, 'value', 'title');
             break;
         default:
             return ['Unknown type', []];
