@@ -61,14 +61,28 @@ fclose($handle);
 
 $filename = clean_filename($report->displayname);
 
-\core\dataformat::download_data($filename, $dataformat, $fields, $rows->getIterator(), function(array $row) use ($dataformat) {
-  // HTML export content will need escaping.
-  if (strcasecmp($dataformat, 'html') === 0) {
-      $row = array_map(function($cell) {
-          return s($cell);
-      }, $row);
-  }
+try {
+    \core\dataformat::download_data($filename, $dataformat, $fields, $rows->getIterator(), function(array $row) use ($dataformat) {
+        // HTML export content will need escaping.
+        if (strcasecmp($dataformat, 'html') === 0) {
+            $row = array_map(function($cell) {
+                return s($cell);
+            }, $row);
+        }
+      
+        return $row;
+      });
+      die;
+} catch (Exception $e) {
+    download_as_dataformat($filename, $dataformat, $fields, $rows->getIterator(), function(array $row) use ($dataformat) {
+        // HTML export content will need escaping.
+        if (strcasecmp($dataformat, 'html') === 0) {
+            $row = array_map(function($cell) {
+                return s($cell);
+            }, $row);
+        }
+    
+        return $row;
+    });
+}
 
-  return $row;
-});
-die;
