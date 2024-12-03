@@ -76,7 +76,7 @@ class report_customsql_edit_form extends moodleform {
 
                 if (in_array($type, ['khoa', 'dot', 'lop', 'mon'])) {
                     list($label, $options) = dttx_options($type);
-                    $mform->addElement('select', $formparam, $label, $options);
+                    $mform->addElement('autocomplete', $formparam, $label, $options);
                 }
 
                 $hasparameters++;
